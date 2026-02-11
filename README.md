@@ -1,13 +1,3 @@
-## Project Structure
-├── pages/
-│   ├── InventoryPage.ts     # Inventory page actions and assertions
-│   └── CartPage.ts          # Cart page actions and assertions
-├── tests/
-│   └── inventory.spec.ts    # Inventory and cart test suite
-├── global-setup.ts          # One-time login, saves session
-├── storageState.json        # Saved auth session (auto-generated)
-├── playwright.config.ts
-
 ## Setup
 
 1. Clone the repository
