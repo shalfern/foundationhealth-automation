@@ -1,4 +1,7 @@
 import { chromium, FullConfig } from "@playwright/test";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 async function globalSetup(config: FullConfig) {
   const browser = await chromium.launch();

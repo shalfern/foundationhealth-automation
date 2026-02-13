@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+require('dotenv').config();
+
 export default defineConfig({
 
     globalSetup: './global-setup.ts',

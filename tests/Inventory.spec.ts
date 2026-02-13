@@ -1,6 +1,7 @@
 import { test, expect, Page } from "@playwright/test";
 import { InventoryPage } from "../pages/inventoryPage";
 import { CartPage } from "../pages/cartPage";
+import { CheckoutPage } from "../pages/checkoutPage";
 
 test.describe.configure({ mode: "serial" });
 
@@ -8,6 +9,7 @@ test.describe("Inventory & Cart", () => {
   let page: Page;
   let inventoryPage: InventoryPage;
   let cartPage: CartPage;
+  let checkoutPage: CheckoutPage;
 
   const TEST_ITEM = {
     name: "Sauce Labs Backpack",
@@ -15,12 +17,14 @@ test.describe("Inventory & Cart", () => {
     description:
       "carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection.",
     price: "$29.99",
+    thankyou: "Thank you for your order!",
   };
 
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
     inventoryPage = new InventoryPage(page);
     cartPage = new CartPage(page);
+    checkoutPage = new CheckoutPage(page);
 
     await inventoryPage.goto();
   });
@@ -48,10 +52,7 @@ test.describe("Inventory & Cart", () => {
   });
 
   test("User is able to add an item to the cart", async () => {
-    await inventoryPage.assertCartCount(0);
-    await inventoryPage.addItemToCart(TEST_ITEM.name);
-    await inventoryPage.assertCartCount(1);
-    await inventoryPage.assertRemoveButtonVisible(TEST_ITEM.name);
+    await inventoryPage.addItemAndVerify(TEST_ITEM.name);
   });
 
   test("User is able to remove an item from the cart", async () => {
@@ -65,5 +66,24 @@ test.describe("Inventory & Cart", () => {
     await cartPage.removeItem(TEST_ITEM.testId);
     await cartPage.assertItemNotVisible(TEST_ITEM.name);
     await cartPage.assertCartEmpty();
+  });
+
+  test("User is able to complete the checkout process", async () => {
+    await cartPage.continueShopping();
+    await inventoryPage.addItemAndVerify(TEST_ITEM.name);
+    await inventoryPage.goToCart();
+    await cartPage.checkout();
+    await checkoutPage.assertOnCheckoutPage();
+    await checkoutPage.fillDetails("John", "Test", "123@gmail.to");
+    await checkoutPage.clickContinue();
+    await checkoutPage.assertOnOverviewPage();
+    await checkoutPage.assertItemDetails(TEST_ITEM.name, TEST_ITEM.price);
+    await checkoutPage.assertPaymentAndShippingVisible();
+    await checkoutPage.assertPriceSummaryVisible();
+    await checkoutPage.assertSubtotal(TEST_ITEM.price);
+    await checkoutPage.clickFinish();
+    await checkoutPage.assertOrderCompleteText(TEST_ITEM.thankyou);
+    await checkoutPage.assertBackHomeButtonVisible();
+    await inventoryPage.assertPageTitle("Checkout: Complete!");
   });
 });

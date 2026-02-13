@@ -30,7 +30,7 @@ export class InventoryPage {
     });
   }
 
-  async addItemToCart(itemName: string) {
+  async addItemToCartButton(itemName: string) {
     const item = this.getItem(itemName);
     await item.locator("button", { hasText: "Add to cart" }).click();
   }
@@ -46,6 +46,13 @@ export class InventoryPage {
     }
     return 0;
   }
+  async addItemAndVerify(itemName: string) {
+    await this.assertCartCount(0);
+    await this.addItemToCartButton(itemName);
+    await this.assertCartCount(1);
+    await this.assertRemoveButtonVisible(itemName);
+}
+
 
   async assertHeaderVisible() {
     await this.appLogo().waitFor({ state: "visible", timeout: 10000 });
