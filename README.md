@@ -10,13 +10,24 @@
 3. Install Playwright browsers
    npx playwright install
 
+4.  Create `.env` file
+    .env
+
+   Then update `.env` with credentials:
+   ```
+ LOGIN_USERNAME=standard_user
+ LOGIN_PASSWORD=secret_sauce
+
+
 ## Run Tests
 
-4. npx playwright test inventory.spec --headed (see test run on the browser)
+4. npx playwright test --headed (see test run on the browser)
 
 ## Notes
 - Tests run in serial mode sharing a single browser session.
 - Test Flow: Login → browse → add to cart → remove from cart.
+- Complete Checkout flow
+- Invalid Login Scenarios
 
 ## ToDo
 - Create a common/ or utils/ folder for shared methods used across multiple page objects.
